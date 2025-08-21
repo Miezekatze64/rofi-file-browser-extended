@@ -86,9 +86,11 @@ void destroy_files ( FileBrowserFileData *fd )
     g_free ( fd->current_dir );
     g_free ( fd->files );
     g_free ( fd->up_text );
+    g_free ( fd->dot_text );
     fd->current_dir = NULL;
     fd->files = NULL;
     fd->up_text = NULL;
+    fd->dot_text = NULL;
     for ( int i = 0; i < fd->num_exclude_patterns; i++ ) {
         g_pattern_spec_free ( fd->exclude_patterns[i] );
     }
@@ -110,6 +112,28 @@ void load_files ( FileBrowserFileData *fd )
 {
     free_files ( fd );
 
+    if ( fd->show_save_option ) {
+        /* Insert the current dir. */
+        FBFile save;
+        save.type = SAVE;
+        save.name = fd->save_text;
+        save.path = NULL; // *synthetic*
+        save.depth = 0;
+        save.icon_fetcher_requests = NULL;
+        save.num_icon_fetcher_requests = 0;
+        insert_file(&save, fd);
+    }
+    if ( fd->show_dot ) {
+        /* Insert the current dir. */
+        FBFile dot;
+        dot.type = DOT;
+        dot.name = fd->dot_text;
+        dot.path = g_build_filename ( fd->current_dir, ".", NULL );
+        dot.depth = 0;
+        dot.icon_fetcher_requests = NULL;
+        dot.num_icon_fetcher_requests = 0;
+        insert_file(&dot, fd);
+    }
     if ( ! fd->hide_parent ) {
         /* Insert the parent dir. */
         FBFile up;

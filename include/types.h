@@ -9,6 +9,8 @@
 
 typedef enum FBFileType {
     UP,
+    DOT,
+    SAVE,
     DIRECTORY,
     RFILE,
     INACCESSIBLE,
@@ -61,8 +63,16 @@ typedef struct {
     bool sort_by_depth;
     /* Hide the parent directory (..). */
     bool hide_parent;
+    /* Show the current directory (.). */
+    bool show_dot;
+    /* Shows a [Save] option at the top. */
+    bool show_save_option;
     /* Text for the parent directory (..). */
     char *up_text;
+    /* Text for the current directory (.). */
+    char *dot_text;
+    /* Text for the [Save] option. */
+    char *save_text;
 } FileBrowserFileData;
 
 // ================================================================================================================= //
@@ -138,6 +148,8 @@ typedef struct {
     char *path_sep;
     /* Absolute path of a file containing a path to resume from. */
     char *resume_file;
+    /* Absolute path of the file name displayed in the input bar when launching, NULL == cwd, empty name */
+    char *default_file_name;
     /* Whether to resume from the path set in resume_file or not. */
     bool resume;
 
@@ -158,6 +170,10 @@ typedef struct {
     bool show_cmds;
     /* Add executables from $PATH to the cmds the next time they are shown. */
     bool search_path_for_cmds;
+    /* Allow selecting nonexistent files. Useful for save dialogs */
+    bool allow_nonexistent;
+    /* Only filters files, keeps directories always visible */
+    bool only_filter_files;
 } FileBrowserModePrivateData;
 
 #endif

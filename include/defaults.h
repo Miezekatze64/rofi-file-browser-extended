@@ -43,6 +43,12 @@
 /* Hide the parent directory (..). */
 #define HIDE_PARENT false
 
+/* Show the current directory (.). */
+#define SHOW_DOT false
+
+/* Show a [Save] option. */
+#define SHOW_SAVE_OPTION false
+
 /* Read paths to display from stdin. */
 #define STDIN_MODE false
 
@@ -58,6 +64,12 @@
 /* Show a status with the current path and mode. */
 #define SHOW_STATUS true
 
+/* Allow selecting a non-existent file. (Useful for save dialogs.) */
+#define ALLOW_NONEXISTENT false
+
+/* Keep directories always visible */
+#define ONLY_FILTER_FILES false
+
 /* The status format. */
 #define HIDE_HIDDEN_SYMBOL "[-]"
 #define SHOW_HIDDEN_SYMBOL "[+]"
@@ -65,6 +77,12 @@
 
 /* The name to display for the parent directory. */
 #define UP_TEXT ".."
+
+/* The name to display for the current directory. */
+#define DOT_TEXT "."
+
+/* The name to display for the save option. */
+#define SAVE_TEXT "[Save]"
 
 /* Special / Fallback icons. */
 #define UP_ICON "go-up"
@@ -92,5 +110,8 @@
 #define RESUME_FILE g_build_filename ( g_get_user_config_dir (), "rofi", "file-browser-resume", NULL )
 /* Whether to resume from the last visited directory by default. */
 #define RESUME false
+
+/* The default file name in the input window. */
+#define DEFAULT_FILE_NAME NULL
 
 #endif

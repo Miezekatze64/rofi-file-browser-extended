@@ -8,6 +8,7 @@
 #include <rofi/rofi-icon-fetcher.h>
 
 #include "defaults.h"
+#include "glib.h"
 #include "types.h"
 #include "files.h"
 #include "icons.h"
@@ -113,6 +114,8 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
     ModeMode retv = RELOAD_DIALOG;
     FBKey key = get_key_for_rofi_mretv ( mretv );
 
+    printf("input = %s\n", *input);
+
     /* Handle open-custom prompt. */
     if ( pd->open_custom ) {
         if ( mretv & MENU_OK || mretv & MENU_CUSTOM_INPUT || key == kd->open_custom_key || key == kd->open_multi_key ) {
@@ -168,6 +171,7 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
             break;
         case RFILE:
         case INACCESSIBLE:
+        case DOT:
         file:
             open_file ( entry, NULL, pd->cmd, pd );
             if ( key != kd->open_multi_key ) {
@@ -191,6 +195,18 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
             g_free ( expanded_input );
 
             if ( ! g_file_test ( abs_path, G_FILE_TEST_EXISTS ) ) {
+                if ( pd->allow_nonexistent && pd->stdout_mode ) {
+                    printf("%s\n", abs_path);
+                    if ( key != kd->open_multi_key ) {
+                        write_resume_file ( pd );
+                        retv = MODE_EXIT;
+                    }
+                    return retv;
+                } else {
+                    fprintf(stderr, "nonexistent files not supported in non-stdout mode.\n");
+                    abort();
+                }
+
                 retv = RELOAD_DIALOG;
             } else if ( ! pd->no_descend && g_file_test ( abs_path, G_FILE_TEST_IS_DIR ) ) {
                 change_dir ( abs_path, fd );
@@ -231,6 +247,19 @@ static int file_browser_token_match ( const Mode *sw, rofi_int_matcher **tokens,
     FileBrowserModePrivateData *pd = ( FileBrowserModePrivateData * ) mode_get_private_data ( sw );
     FileBrowserFileData *fd = &pd->file_data;
 
+    if ( fd->show_save_option ) {
+        if ( fd->files[index].type == SAVE ) {
+            return true;
+        }
+    }
+
+    if ( pd->only_filter_files ) {
+        if ( fd->files[index].type == DIRECTORY || fd->files[index].type == UP
+             || fd->files[index].type == DOT ) {
+            return true;
+        }
+    }
+
     if ( pd->open_custom ) {
         if ( pd->show_cmds ) {
             FBCmd *fbcmd = &pd->cmds[index];
@@ -263,7 +292,7 @@ static char *file_browser_get_display_value ( const Mode *sw, unsigned int selec
     }
 }
 
-static cairo_surface_t *file_browser_get_icon ( const Mode *sw, unsigned int selected_line, int height )
+static cairo_surface_t *file_browser_get_icon ( const Mode *sw, unsigned int selected_line, unsigned int height )
 {
     FileBrowserModePrivateData *pd = ( FileBrowserModePrivateData * ) mode_get_private_data ( sw );
     FileBrowserFileData *fd = &pd->file_data;

@@ -6,6 +6,7 @@
 #include <rofi/helper.h>
 
 #include "defaults.h"
+#include "glib.h"
 #include "types.h"
 #include "util.h"
 #include "options.h"
@@ -94,6 +95,8 @@ bool set_options ( FileBrowserModePrivateData *pd )
     fd->only_dirs            = fb_find_arg ( "-file-browser-only-dirs"           , pd ) ? true  : ONLY_DIRS;
     fd->only_files           = fb_find_arg ( "-file-browser-only-files"          , pd ) ? true  : ONLY_FILES;
     fd->hide_parent          = fb_find_arg ( "-file-browser-hide-parent"         , pd ) ? true  : HIDE_PARENT;
+    fd->show_dot             = fb_find_arg ( "-file-browser-show-dot"            , pd ) ? true  : SHOW_DOT;
+    fd->show_save_option     = fb_find_arg ( "-file-browser-show-save-option"    , pd ) ? true  : SHOW_SAVE_OPTION;
     id->show_icons           = fb_find_arg ( "-file-browser-disable-icons"       , pd ) ? false : SHOW_ICONS;
     id->show_thumbnails      = fb_find_arg ( "-file-browser-disable-thumbnails"  , pd ) ? false : SHOW_THUMBNAILS;
     pd->stdout_mode          = fb_find_arg ( "-file-browser-stdout"              , pd ) ? true  : STDOUT_MODE;
@@ -103,9 +106,12 @@ bool set_options ( FileBrowserModePrivateData *pd )
     pd->open_parent_as_self  = fb_find_arg ( "-file-browser-open-parent-as-self" , pd ) ? true  : OPEN_PARENT_AS_SELF;
     pd->search_path_for_cmds = fb_find_arg ( "-file-browser-oc-search-path"      , pd ) ? true  : SEARCH_PATH_FOR_CMDS;
     pd->resume               = fb_find_arg ( "-file-browser-resume"              , pd ) ? true  : RESUME;
+    pd->allow_nonexistent    = fb_find_arg ( "-file-browser-allow-nonexistent"   , pd ) ? true  : ALLOW_NONEXISTENT;
 
     fd->up_text             = str_arg_or_default ( "-file-browser-up-text",            UP_TEXT,            pd );
     id->up_icon             = str_arg_or_default ( "-file-browser-up-icon",            UP_ICON,            pd );
+    fd->dot_text            = str_arg_or_default ( "-file-browser-dot-text",           DOT_TEXT,           pd );
+    fd->save_text           = str_arg_or_default ( "-file-browser-save-text",          SAVE_TEXT,          pd );
     id->inaccessible_icon   = str_arg_or_default ( "-file-browser-inaccessible-icon",  INACCESSIBLE_ICON,  pd );
     id->fallback_icon       = str_arg_or_default ( "-file-browser-fallback-icon",      FALLBACK_ICON,      pd );
     pd->cmd                 = str_arg_or_default ( "-file-browser-cmd",                CMD,                pd );
