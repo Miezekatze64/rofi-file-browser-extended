@@ -114,8 +114,6 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
     ModeMode retv = RELOAD_DIALOG;
     FBKey key = get_key_for_rofi_mretv ( mretv );
 
-    printf("input = %s\n", *input);
-
     /* Handle open-custom prompt. */
     if ( pd->open_custom ) {
         if ( mretv & MENU_OK || mretv & MENU_CUSTOM_INPUT || key == kd->open_custom_key || key == kd->open_multi_key ) {
@@ -166,7 +164,7 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
             } else {
                 change_dir ( entry->path, fd );
                 load_files ( fd );
-                retv = RESET_DIALOG;
+                retv = RELOAD_DIALOG;
             }
             break;
         case RFILE:
@@ -179,6 +177,23 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
                 retv = MODE_EXIT;
             }
             break;
+        case SAVE:
+            if ( strlen(*input) ) {
+                if ( pd->stdout_mode ) {
+                    char *path = g_build_filename ( fd->current_dir, *input, NULL );
+                    printf("%s\n", path);
+                    g_free ( path );
+                    if ( key != kd->open_multi_key ) {
+                        write_resume_file ( pd );
+                        retv = MODE_EXIT;
+                    }
+                    return retv;
+                } else {
+                    fprintf(stderr, "nonexistent files not supported in non-stdout mode.\n");
+                    abort();
+                }
+            }
+            // fallthrough
         case UNKNOWN:
             if ( g_file_test ( entry->path, G_FILE_TEST_IS_DIR ) ) {
                 goto directory;
@@ -195,18 +210,6 @@ static ModeMode file_browser_result ( Mode *sw,  int mretv, char **input, unsign
             g_free ( expanded_input );
 
             if ( ! g_file_test ( abs_path, G_FILE_TEST_EXISTS ) ) {
-                if ( pd->allow_nonexistent && pd->stdout_mode ) {
-                    printf("%s\n", abs_path);
-                    if ( key != kd->open_multi_key ) {
-                        write_resume_file ( pd );
-                        retv = MODE_EXIT;
-                    }
-                    return retv;
-                } else {
-                    fprintf(stderr, "nonexistent files not supported in non-stdout mode.\n");
-                    abort();
-                }
-
                 retv = RELOAD_DIALOG;
             } else if ( ! pd->no_descend && g_file_test ( abs_path, G_FILE_TEST_IS_DIR ) ) {
                 change_dir ( abs_path, fd );

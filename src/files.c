@@ -117,7 +117,7 @@ void load_files ( FileBrowserFileData *fd )
         FBFile save;
         save.type = SAVE;
         save.name = fd->save_text;
-        save.path = NULL; // *synthetic*
+        save.path = g_build_filename ( fd->current_dir, ".", NULL ); // *synthetic*
         save.depth = 0;
         save.icon_fetcher_requests = NULL;
         save.num_icon_fetcher_requests = 0;

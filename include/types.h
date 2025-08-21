@@ -170,8 +170,6 @@ typedef struct {
     bool show_cmds;
     /* Add executables from $PATH to the cmds the next time they are shown. */
     bool search_path_for_cmds;
-    /* Allow selecting nonexistent files. Useful for save dialogs */
-    bool allow_nonexistent;
     /* Only filters files, keeps directories always visible */
     bool only_filter_files;
 } FileBrowserModePrivateData;

@@ -64,9 +64,6 @@
 /* Show a status with the current path and mode. */
 #define SHOW_STATUS true
 
-/* Allow selecting a non-existent file. (Useful for save dialogs.) */
-#define ALLOW_NONEXISTENT false
-
 /* Keep directories always visible */
 #define ONLY_FILTER_FILES false
 
